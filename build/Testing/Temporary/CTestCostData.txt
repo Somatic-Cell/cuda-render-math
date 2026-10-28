@@ -1,2 +1,0 @@
-cuda_render_math.vector 2 0.0095856
----

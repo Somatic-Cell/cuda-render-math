@@ -23,27 +23,47 @@ option(CUDA_RENDER_MATH_BUILD_CUDA_CHECK
 
 if(CUDA_RENDER_MATH_BUILD_TESTS)
     enable_testing()
+
+    function(cuda_render_math_configure_test target)
+        target_link_libraries(${target}
+        PRIVATE cuda_render_math::cuda_render_math
+        )
+        set_target_properties(${target} PROPERTIES
+            CXX_EXTENSIONS OFF
+        )
+        # コンパイルオプション
+        if(MSVC)
+            target_compile_options(cuda_render_math_vector_test PRIVATE
+                /W4 /utf-8 /permissive- /Zc:__cplusplus /Zc:preprocessor)
+        elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+            target_compile_options(cuda_render_math_vector_test PRIVATE
+                -Wall -Wextra -Wpedantic -Wconversion)
+        endif()
+    endfunction()
+
     add_executable(cuda_render_math_vector_test
         tests/vector_test.cpp
         tests/vector_odr.cpp
     )
-    target_link_libraries(cuda_render_math_vector_test
-        PRIVATE cuda_render_math::cuda_render_math
-    )
-    set_target_properties(cuda_render_math_vector_test PROPERTIES
-        CXX_EXTENSIONS OFF
-    )
-
-    # コンパイルオプション
-    if(MSVC)
-        target_compile_options(cuda_render_math_vector_test PRIVATE
-            /W4 /utf-8 /permissive- /Zc:__cplusplus /Zc:preprocessor)
-    elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-        target_compile_options(cuda_render_math_vector_test PRIVATE
-            -Wall -Wextra -Wpedantic -Wconversion)
-    endif()
-
+    cuda_render_math_configure_test(cuda_render_math_vector_test)
     add_test(NAME cuda_render_math.vector COMMAND cuda_render_math_vector_test)
+
+    add_executable(cuda_render_math_m0_2_test
+        tests/m0_2_test.cpp 
+        tests/m0_2_odr.cpp
+    )
+    cuda_render_math_configure_test(cuda_render_math_m0_2_test)
+    add_test(NAME cuda_render_math.m0_2 COMMAND cuda_render_math_m0_2_test)
+
+    set(header_check_sources)
+    file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/header_checks")
+    foreach(header IN ITEMS config scalar scalar_math vector)
+        set(source "${CMAKE_CURRENT_BINARY_DIR}/${header}.cpp")
+        file(WRITE "${source}" "#include <cuda_render_math/${header}.hpp>\n" "#include <cuda_render_math/${header}.hpp>\n")
+        list(APPEND header_check_sources "${source}")
+    endforeach()
+    add_library(cuda_render_math_header_checks OBJECT ${header_check_sources})
+    cuda_render_math_configure_test(cuda_render_math_header_checks)    
 endif()
 
 if(CUDA_RENDER_MATH_BUILD_CUDA_CHECK)

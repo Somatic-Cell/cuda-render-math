@@ -1,4 +1,0 @@
-C:/Users/sy415/workspace/cuda_render_math/build/CMakeFiles/cuda_render_math_vector_test.dir
-C:/Users/sy415/workspace/cuda_render_math/build/CMakeFiles/RUN_TESTS.dir
-C:/Users/sy415/workspace/cuda_render_math/build/CMakeFiles/ALL_BUILD.dir
-C:/Users/sy415/workspace/cuda_render_math/build/CMakeFiles/ZERO_CHECK.dir
