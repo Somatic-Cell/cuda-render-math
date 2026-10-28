@@ -16,7 +16,7 @@ target_include_directories(cuda_render_math INTERFACE
 option(CUDA_RENDER_MATH_BUILD_TESTS
     "BUild the host contract tests" ${PROJECT_IS_TOP_LEVEL}
 )
-option(RENDER_MATH_BUILD_CUDA_CHECK
+option(CUDA_RENDER_MATH_BUILD_CUDA_CHECK
     "Compile the header checks to PTX without GPU execution" OFF
 )
 

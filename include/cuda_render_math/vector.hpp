@@ -89,7 +89,7 @@ operator/(vec3<T> v, T s) noexcept {
 // 複合代入演算子
 template<real_scalar T>
 CUDA_RENDER_MATH_HD constexpr vec3<T>&
-operator+=(vec3<T> a, vec3<T> b) noexcept {
+operator+=(vec3<T>& a, vec3<T> b) noexcept {
     a.x += b.x; 
     a.y += b.y; 
     a.z += b.z;
@@ -98,7 +98,7 @@ operator+=(vec3<T> a, vec3<T> b) noexcept {
 
 template<real_scalar T>
 CUDA_RENDER_MATH_HD constexpr vec3<T>&
-operator-=(vec3<T> a, vec3<T> b) noexcept {
+operator-=(vec3<T>& a, vec3<T> b) noexcept {
     a.x -= b.x; 
     a.y -= b.y; 
     a.z -= b.z;
@@ -107,7 +107,7 @@ operator-=(vec3<T> a, vec3<T> b) noexcept {
 
 template<real_scalar T>
 CUDA_RENDER_MATH_HD constexpr vec3<T>&
-operator*=(vec3<T> v, T s) noexcept {
+operator*=(vec3<T>& v, T s) noexcept {
     v.x *= s; 
     v.y *= s; 
     v.z *= s;
@@ -116,7 +116,7 @@ operator*=(vec3<T> v, T s) noexcept {
 
 template<real_scalar T>
 CUDA_RENDER_MATH_HD constexpr vec3<T>&
-operator/=(vec3<T> v, T s) noexcept {
+operator/=(vec3<T>& v, T s) noexcept {
     v.x /= s; 
     v.y /= s; 
     v.z /= s;

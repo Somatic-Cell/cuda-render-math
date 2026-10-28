@@ -1,3 +1,2 @@
-cuda_render_math.vector 0 0
+cuda_render_math.vector 2 0.0095856
 ---
-cuda_render_math.vector

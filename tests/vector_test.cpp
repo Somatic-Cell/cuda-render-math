@@ -128,8 +128,8 @@ constexpr bool equal(vec3<T> actual, vec3<T> expected)
 template <cuda_render_math::real_scalar T>
 consteval bool check_constexpr_arithmetic()
 {
-    const vec3<T> a{T(2), T(4), T(8)};
-    const vec3<T> b{T(1), T(2), T(4)};
+    const cuda_render_math::vec3<T> a{T(2), T(4), T(8)};
+    const cuda_render_math::vec3<T> b{T(1), T(2), T(4)};
     if (!equal(-a, vec3<T>{T(-2), T(-4), T(-8)}) ||
         !equal(a + b, vec3<T>{T(3), T(6), T(12)}) ||
         !equal(a - b, b) || !equal(b * T(2), a) ||
