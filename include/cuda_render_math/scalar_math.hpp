@@ -15,7 +15,7 @@ namespace cuda_render_math {
 template<real_scalar T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline T
 abs(T x) noexcept {
-#if defined (__CUDA__ARCH__)
+#if defined (__CUDA_ARCH__)
     if constexpr (std::same_as<T, float>) {
         return ::fabsf(x);
     } else {
@@ -44,7 +44,7 @@ sqrt(T x) noexcept {
 template<real_scalar T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline T
 fma(T x, T y, T z) noexcept {
-#if defined (__CUDA__ARCH__)
+#if defined (__CUDA_ARCH__)
     if constexpr (std::same_as<T, float>) {
         return ::fmaf(x, y, z);
     } else {
@@ -58,7 +58,7 @@ fma(T x, T y, T z) noexcept {
 template<real_scalar T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline T
 copysign(T magnitude, T sign_source) noexcept {
-#if defined (__CUDA__ARCH__)
+#if defined (__CUDA_ARCH__)
     if constexpr (std::same_as<T, float>) {
         return ::copysignf(magnitude, sign_source);
     } else {
@@ -72,7 +72,7 @@ copysign(T magnitude, T sign_source) noexcept {
 template<real_scalar T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline bool
 isfinite(T x) noexcept {
-#if defined (__CUDA__ARCH__)
+#if defined (__CUDA_ARCH__)
     return ::isfinite(x) != 0;
 #else
     return std::isfinite(x);

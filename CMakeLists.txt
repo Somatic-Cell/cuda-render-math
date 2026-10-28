@@ -33,28 +33,44 @@ if(CUDA_RENDER_MATH_BUILD_TESTS)
         )
         # コンパイルオプション
         if(MSVC)
-            target_compile_options(cuda_render_math_vector_test PRIVATE
+            target_compile_options(${target} PRIVATE
                 /W4 /utf-8 /permissive- /Zc:__cplusplus /Zc:preprocessor)
         elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-            target_compile_options(cuda_render_math_vector_test PRIVATE
+            target_compile_options(${target} PRIVATE
                 -Wall -Wextra -Wpedantic -Wconversion)
         endif()
     endfunction()
 
-    add_executable(cuda_render_math_vector_test
-        tests/vector_test.cpp
-        tests/vector_odr.cpp
+    # ベクトルの構築に関するテスト
+    add_executable(vector_construction_test
+        tests/vector_construction_test.cpp
     )
-    cuda_render_math_configure_test(cuda_render_math_vector_test)
-    add_test(NAME cuda_render_math.vector COMMAND cuda_render_math_vector_test)
+    cuda_render_math_configure_test(vector_construction_test)
+    add_test(NAME cuda_render_math.vector_construction COMMAND vector_construction_test)
 
-    add_executable(cuda_render_math_m0_2_test
-        tests/m0_2_test.cpp 
-        tests/m0_2_odr.cpp
+    # 演算に関するテスト
+    add_executable(vector_arithmetic_test
+        tests/vector_arithmetic_test.cpp 
+        tests/vector_linkage.cpp
     )
-    cuda_render_math_configure_test(cuda_render_math_m0_2_test)
-    add_test(NAME cuda_render_math.m0_2 COMMAND cuda_render_math_m0_2_test)
+    cuda_render_math_configure_test(vector_arithmetic_test)
+    add_test(NAME cuda_render_math.vector_arithmetic COMMAND vector_arithmetic_test)
 
+    add_executable(vector_geometry_test
+        tests/vector_geometry_test.cpp)
+    cuda_render_math_configure_test(vector_geometry_test)
+    add_test(NAME cuda_render_math.vector_geometry
+        COMMAND vector_geometry_test)
+
+    add_executable(scalar_math_test
+        tests/scalar_math_test.cpp 
+        tests/scalar_math_linkage.cpp
+    )
+    cuda_render_math_configure_test(scalar_math_test)
+    add_test(NAME cuda_render_math.scalar_math
+        COMMAND scalar_math_test)
+
+    # 意図的に多重インクルードさせるテスト
     set(header_check_sources)
     file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/header_checks")
     foreach(header IN ITEMS config scalar scalar_math vector)
