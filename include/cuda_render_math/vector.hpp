@@ -7,7 +7,7 @@ namespace cuda_render_math
 {
 
 // 2--4 次元の実数ベクトル
-template<real_scalar T> struct vec2;
+template<real_scalar T> struct vec3;
 template<real_scalar T> struct vec3;
 template<real_scalar T> struct vec4;
 
@@ -20,7 +20,7 @@ struct vec2 {
     T y{};
 
     // 基本は 0 初期化
-    CUDA_RENDER_MATH_HD constexpr vec2() noexcept = default;
+    constexpr vec2() noexcept = default;
 
     // vec2(s) は {s, s} と初期化する
     CUDA_RENDER_MATH_HD explicit constexpr vec2(T s) noexcept
@@ -42,7 +42,7 @@ struct vec3 {
     T z{};
 
     // 基本は 0 初期化
-    CUDA_RENDER_MATH_HD constexpr vec3() noexcept = default;
+    constexpr vec3() noexcept = default;
 
     // vec3(s) は {s, s, s} と初期化する
     CUDA_RENDER_MATH_HD explicit constexpr vec3(T s) noexcept
@@ -75,7 +75,7 @@ struct vec4 {
     T w{};
 
     // 基本は 0 初期化
-    CUDA_RENDER_MATH_HD constexpr vec4() noexcept = default;
+    constexpr vec4() noexcept = default;
 
     // vec4(s) は {s, s, s, s} と初期化する
     CUDA_RENDER_MATH_HD explicit constexpr vec4(T s) noexcept
@@ -162,6 +162,24 @@ operator+(vec2<T> a, vec2<T> b) noexcept {
     };
 }
 
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
+operator+(vec2<T> v, T s) noexcept {
+    return {
+        v.x + s, 
+        v.y + s
+    };
+}
+
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
+operator+(T s, vec2<T> v) noexcept {
+    return {
+        s + v.x, 
+        s + v.y
+    };
+}
+
 // 引き算
 template<real_scalar T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
@@ -169,6 +187,24 @@ operator-(vec2<T> a, vec2<T> b) noexcept {
     return {
         a.x - b.x, 
         a.y - b.y
+    };
+}
+
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
+operator-(vec2<T> v, T s) noexcept {
+    return {
+        v.x - s, 
+        v.y - s
+    };
+}
+
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
+operator-(T s, vec2<T> v) noexcept {
+    return {
+        s - v.x, 
+        s - v.y
     };
 }
 
@@ -200,6 +236,16 @@ operator/(vec2<T> v, T s) noexcept {
     };
 }
 
+
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
+operator/(T s, vec2<T> v) noexcept {
+    return {
+        s / v.x, 
+        s / v.y
+    };
+}
+
 // 複合代入演算子
 template<real_scalar T>
 CUDA_RENDER_MATH_HD constexpr vec2<T>&
@@ -211,10 +257,27 @@ operator+=(vec2<T>& a, vec2<T> b) noexcept {
 
 template<real_scalar T>
 CUDA_RENDER_MATH_HD constexpr vec2<T>&
+operator+=(vec2<T>& v, T s) noexcept {
+    v.x += s; 
+    v.y += s; 
+    return v;
+}
+
+
+template<real_scalar T>
+CUDA_RENDER_MATH_HD constexpr vec2<T>&
 operator-=(vec2<T>& a, vec2<T> b) noexcept {
     a.x -= b.x; 
     a.y -= b.y; 
     return a;
+}
+
+template<real_scalar T>
+CUDA_RENDER_MATH_HD constexpr vec2<T>&
+operator-=(vec2<T>& v, T s) noexcept {
+    v.x -= s; 
+    v.y -= s; 
+    return v;
 }
 
 template<real_scalar T>
@@ -233,6 +296,15 @@ operator/=(vec2<T>& v, T s) noexcept {
     return v;
 }
 
+template<real_scalar T>
+CUDA_RENDER_MATH_HD constexpr vec2<T>
+operator/=(T s, vec3<T> v) noexcept {
+    return{
+        s / v.x,
+        s / v.y
+    };
+}
+
 // 内積
 template<real_scalar T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr T
@@ -245,6 +317,42 @@ template<real_scalar T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr T
 length_squared(vec2<T> v) noexcept {
     return cuda_render_math::dot(v, v);
+}
+
+// 要素積
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
+cwise_mul(vec2<T> a, vec2<T> b) noexcept {
+    return {
+        a.x * b.x,
+        a.y * b.y
+    };
+}
+
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>&
+cwise_mul_assign(vec2<T>& a, vec2<T> b) noexcept {
+    a.x *= b.x;
+    a.y *= b.y;
+    return a;
+}
+
+// 要素ごとの除算
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
+cwise_div(vec2<T> a, vec2<T> b) noexcept {
+    return {
+        a.x / b.x,
+        a.y / b.y
+    };
+}
+
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>&
+cwise_div_assign(vec2<T>& a, vec2<T> b) noexcept {
+    a.x /= b.x;
+    a.y /= b.y;
+    return a;
 }
 
 // --------------------------
@@ -279,6 +387,26 @@ operator+(vec3<T> a, vec3<T> b) noexcept {
     };
 }
 
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
+operator+(vec3<T> v, T s) noexcept {
+    return {
+        v.x + s, 
+        v.y + s,
+        v.z + s
+    };
+}
+
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
+operator+(T s, vec3<T> v) noexcept {
+    return {
+        s + v.x, 
+        s + v.y,
+        s + v.z
+    };
+}
+
 // 引き算
 template<real_scalar T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
@@ -287,6 +415,26 @@ operator-(vec3<T> a, vec3<T> b) noexcept {
         a.x - b.x, 
         a.y - b.y, 
         a.z - b.z 
+    };
+}
+
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
+operator-(vec3<T> v, T s) noexcept {
+    return {
+        v.x - s, 
+        v.y - s,
+        v.z - s
+    };
+}
+
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
+operator-(T s, vec3<T> v) noexcept {
+    return {
+        s - v.x, 
+        s - v.y,
+        s - v.z
     };
 }
 
@@ -320,6 +468,16 @@ operator/(vec3<T> v, T s) noexcept {
     };
 }
 
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
+operator/(T s, vec3<T> v) noexcept {
+    return {
+        s / v.x, 
+        s / v.y, 
+        s / v.z
+    };
+}
+
 // 複合代入演算子
 template<real_scalar T>
 CUDA_RENDER_MATH_HD constexpr vec3<T>&
@@ -332,11 +490,29 @@ operator+=(vec3<T>& a, vec3<T> b) noexcept {
 
 template<real_scalar T>
 CUDA_RENDER_MATH_HD constexpr vec3<T>&
+operator+=(vec3<T>& v, T s) noexcept {
+    v.x += s; 
+    v.y += s; 
+    v.z += s; 
+    return v;
+}
+
+template<real_scalar T>
+CUDA_RENDER_MATH_HD constexpr vec3<T>&
 operator-=(vec3<T>& a, vec3<T> b) noexcept {
     a.x -= b.x; 
     a.y -= b.y; 
     a.z -= b.z;
     return a;
+}
+
+template<real_scalar T>
+CUDA_RENDER_MATH_HD constexpr vec3<T>&
+operator-=(vec3<T>& v, T s) noexcept {
+    v.x -= s; 
+    v.y -= s; 
+    v.z -= s; 
+    return v;
 }
 
 template<real_scalar T>
@@ -355,6 +531,16 @@ operator/=(vec3<T>& v, T s) noexcept {
     v.y /= s; 
     v.z /= s;
     return v;
+}
+
+template<real_scalar T>
+CUDA_RENDER_MATH_HD constexpr vec3<T>
+operator/=(T s, vec3<T> v) noexcept {
+    return{
+        s / v.x,
+        s / v.y,
+        s / v.z
+    };
 }
 
 // 内積
@@ -382,6 +568,45 @@ length_squared(vec3<T> v) noexcept {
     return cuda_render_math::dot(v, v);
 }
 
+// 要素積
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
+cwise_mul(vec3<T> a, vec3<T> b) noexcept {
+    return {
+        a.x * b.x,
+        a.y * b.y,
+        a.z * b.z
+    };
+}
+
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>&
+cwise_mul_assign(vec3<T>& a, vec3<T> b) noexcept {
+    a.x *= b.x;
+    a.y *= b.y;
+    a.z *= b.z;
+    return a;
+}
+
+// 要素ごとの除算
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
+cwise_div(vec3<T> a, vec3<T> b) noexcept {
+    return {
+        a.x / b.x,
+        a.y / b.y,
+        a.z / b.z
+    };
+}
+
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>&
+cwise_div_assign(vec3<T>& a, vec3<T> b) noexcept {
+    a.x /= b.x;
+    a.y /= b.y;
+    a.z /= b.z;
+    return a;
+}
 
 // --------------------------
 // 4 次元実数ベクトルの計算
@@ -417,6 +642,28 @@ operator+(vec4<T> a, vec4<T> b) noexcept {
     };
 }
 
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
+operator+(vec4<T> v, T s) noexcept {
+    return {
+        v.x + s, 
+        v.y + s,
+        v.z + s,
+        v.w + s
+    };
+}
+
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
+operator+(T s, vec4<T> v) noexcept {
+    return {
+        s + v.x, 
+        s + v.y,
+        s + v.z,
+        s + v.w
+    };
+}
+
 // 引き算
 template<real_scalar T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
@@ -426,6 +673,28 @@ operator-(vec4<T> a, vec4<T> b) noexcept {
         a.y - b.y, 
         a.z - b.z, 
         a.w - b.w 
+    };
+}
+
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
+operator-(vec4<T> v, T s) noexcept {
+    return {
+        v.x - s, 
+        v.y - s,
+        v.z - s,
+        v.w - s
+    };
+}
+
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
+operator-(T s, vec4<T> v) noexcept {
+    return {
+        s - v.x, 
+        s - v.y,
+        s - v.z,
+        s - v.w
     };
 }
 
@@ -449,7 +718,7 @@ operator*(T s, vec4<T> v) noexcept {
     return v * s;
 }
 
-// スカラによる割り算
+// 割り算
 template<real_scalar T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
 operator/(vec4<T> v, T s) noexcept {
@@ -460,6 +729,18 @@ operator/(vec4<T> v, T s) noexcept {
         v.w / s
     };
 }
+
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
+operator/(T s, vec4<T> v) noexcept {
+    return {
+        s / v.x, 
+        s / v.y, 
+        s / v.z,
+        s / v.w
+    };
+}
+
 
 // 複合代入演算子
 template<real_scalar T>
@@ -474,12 +755,32 @@ operator+=(vec4<T>& a, vec4<T> b) noexcept {
 
 template<real_scalar T>
 CUDA_RENDER_MATH_HD constexpr vec4<T>&
+operator+=(vec4<T>& v, T s) noexcept {
+    v.x += s; 
+    v.y += s; 
+    v.z += s; 
+    v.w += s; 
+    return v;
+}
+
+template<real_scalar T>
+CUDA_RENDER_MATH_HD constexpr vec4<T>&
 operator-=(vec4<T>& a, vec4<T> b) noexcept {
     a.x -= b.x; 
     a.y -= b.y; 
     a.z -= b.z;
     a.w -= b.w;
     return a;
+}
+
+template<real_scalar T>
+CUDA_RENDER_MATH_HD constexpr vec4<T>&
+operator-=(vec4<T>& v, T s) noexcept {
+    v.x -= s; 
+    v.y -= s; 
+    v.z -= s; 
+    v.w -= s; 
+    return v;
 }
 
 template<real_scalar T>
@@ -502,6 +803,17 @@ operator/=(vec4<T>& v, T s) noexcept {
     return v;
 }
 
+template<real_scalar T>
+CUDA_RENDER_MATH_HD constexpr vec4<T>
+operator/=(T s, vec4<T> v) noexcept {
+    return{
+        s / v.x,
+        s / v.y,
+        s / v.z,
+        s / v.w
+    };
+}
+
 // 内積
 template<real_scalar T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr T
@@ -515,6 +827,51 @@ template<real_scalar T>
 length_squared(vec4<T> v) noexcept {
     return cuda_render_math::dot(v, v);
 }
+
+// 要素積
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
+cwise_mul(vec4<T> a, vec4<T> b) noexcept {
+    return {
+        a.x * b.x,
+        a.y * b.y,
+        a.z * b.z,
+        a.w * b.w
+    };
+}
+
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>&
+cwise_mul_assign(vec4<T>& a, vec4<T> b) noexcept {
+    a.x *= b.x;
+    a.y *= b.y;
+    a.z *= b.z;
+    a.w *= b.w;
+    return a;
+}
+
+// 要素ごとの除算
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
+cwise_div(vec4<T> a, vec4<T> b) noexcept {
+    return {
+        a.x / b.x,
+        a.y / b.y,
+        a.z / b.z,
+        a.w / b.w
+    };
+}
+
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>&
+cwise_div_assign(vec4<T>& a, vec4<T> b) noexcept {
+    a.x /= b.x;
+    a.y /= b.y;
+    a.z /= b.z;
+    a.w /= b.w;
+    return a;
+}
+
 
 
 } // namespace cuda_render_math

@@ -49,6 +49,7 @@ if(CUDA_RENDER_MATH_BUILD_TESTS)
     add_test(NAME cuda_render_math.vector_construction COMMAND vector_construction_test)
 
     # 演算に関するテスト
+    # ベクトル
     add_executable(vector_arithmetic_test
         tests/vector_arithmetic_test.cpp 
         tests/vector_linkage.cpp
@@ -62,6 +63,16 @@ if(CUDA_RENDER_MATH_BUILD_TESTS)
     add_test(NAME cuda_render_math.vector_geometry
         COMMAND vector_geometry_test)
 
+    add_executable(vector_component_test 
+        tests/vector_component_test.cpp
+    )
+    cuda_render_math_configure_test(vector_component_test)
+    add_test(NAME cuda_render_math.vector_component 
+        COMMAND vector_component_test
+    )
+
+
+    # スカラ
     add_executable(scalar_math_test
         tests/scalar_math_test.cpp 
         tests/scalar_math_linkage.cpp
@@ -69,6 +80,16 @@ if(CUDA_RENDER_MATH_BUILD_TESTS)
     cuda_render_math_configure_test(scalar_math_test)
     add_test(NAME cuda_render_math.scalar_math
         COMMAND scalar_math_test)
+
+    add_executable(scalar_utilities_test 
+        tests/scalar_utilities_test.cpp
+    )
+    cuda_render_math_configure_test(scalar_utilities_test)
+    add_test(NAME cuda_render_math.scalar_utilities 
+        COMMAND scalar_utilities_test
+    )
+
+    
 
     # 意図的に多重インクルードさせるテスト
     set(header_check_sources)
@@ -78,7 +99,9 @@ if(CUDA_RENDER_MATH_BUILD_TESTS)
         file(WRITE "${source}" "#include <cuda_render_math/${header}.hpp>\n" "#include <cuda_render_math/${header}.hpp>\n")
         list(APPEND header_check_sources "${source}")
     endforeach()
-    add_library(cuda_render_math_header_checks OBJECT ${header_check_sources})
+    add_library(cuda_render_math_header_checks OBJECT 
+        ${header_check_sources} tests/minmax_macro_check.cpp
+    )
     cuda_render_math_configure_test(cuda_render_math_header_checks)    
 endif()
 
@@ -88,7 +111,10 @@ if(CUDA_RENDER_MATH_BUILD_CUDA_CHECK)
             OR CMAKE_CUDA_COMPILER_VERSION VERSION_LESS "12.0")
         message(FATAL_ERROR "The CUDA check requires NVIDIA nvcc 12.0 or newer.")
     endif()
-    add_library(cuda_render_math_cuda_check OBJECT tests/cuda_compile_check.cu)
+    add_library(cuda_render_math_cuda_check OBJECT 
+        tests/cuda_compile_check.cu
+        tests/cuda_component_check.cu
+    )
     target_link_libraries(cuda_render_math_cuda_check
         PRIVATE cuda_render_math::cuda_render_math)
     set_target_properties(cuda_render_math_cuda_check PROPERTIES
