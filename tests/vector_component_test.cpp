@@ -17,6 +17,7 @@ template<typename L, typename R> concept can_sub = requires(L a, R b) { a - b; }
 template<typename L, typename R> concept can_div = requires(L a, R b) { a / b; };
 template<typename L, typename R> concept can_add_assign = requires(L a, R b) { a += b; };
 template<typename L, typename R> concept can_sub_assign = requires(L a, R b) { a -= b; };
+template<typename L, typename R> concept can_div_assign = requires(L a, R b) { a /= b; };
 template<typename L, typename R> concept can_cmul = requires(L a, R b) { rm::cwise_mul(a, b); };
 template<typename L, typename R> concept can_cdiv = requires(L a, R b) { rm::cwise_div(a, b); };
 template<typename L, typename R> concept can_cmul_assign = requires(L a, R b) { rm::cwise_mul_assign(a, b); };
@@ -77,6 +78,13 @@ consteval bool check_contracts() {
     static_assert(std::same_as<decltype(rm::cwise_mul_assign(std::declval<V&>(), V{})), V&>);
     static_assert(std::same_as<decltype(rm::clamp(V{}, T(0), T(1))), V>);
     static_assert(std::same_as<decltype(rm::lerp(V{}, V{}, T(0))), V>);
+    // Supported smoothstep signatures must remain deducible without explicit T.
+    static_assert(can_smoothstep<V, T> && can_smoothstep<V, V>);
+    static_assert(!can_smoothstep<V, Other>);
+    static_assert(std::same_as<decltype(rm::smoothstep(T(0), T(1), V{})), V>);
+    static_assert(std::same_as<decltype(rm::smoothstep(V{}, V(T(1)), V{})), V>);
+    // s / v is supported, but a scalar cannot store a vector-valued result.
+    static_assert(!can_div_assign<T, V>);
     static_assert(noexcept(rm::cwise_mul(V{}, V{})) && noexcept(rm::clamp(V{}, T(0), T(1))));
     return check_arithmetic<V>();
 }

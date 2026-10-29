@@ -296,15 +296,6 @@ operator/=(vec2<T>& v, T s) noexcept {
     return v;
 }
 
-template<real_scalar T>
-CUDA_RENDER_MATH_HD constexpr vec2<T>
-operator/=(T s, vec3<T> v) noexcept {
-    return{
-        s / v.x,
-        s / v.y
-    };
-}
-
 // 内積
 template<real_scalar T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr T
@@ -329,8 +320,9 @@ cwise_mul(vec2<T> a, vec2<T> b) noexcept {
     };
 }
 
+// 戻り値を使わずに呼び出しても良いので， [[nodiscard]] は付けない
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>&
+CUDA_RENDER_MATH_HD constexpr vec2<T>&
 cwise_mul_assign(vec2<T>& a, vec2<T> b) noexcept {
     a.x *= b.x;
     a.y *= b.y;
@@ -347,8 +339,9 @@ cwise_div(vec2<T> a, vec2<T> b) noexcept {
     };
 }
 
+// 戻り値を使わずに呼び出しても良いので， [[nodiscard]] は付けない
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>&
+CUDA_RENDER_MATH_HD constexpr vec2<T>&
 cwise_div_assign(vec2<T>& a, vec2<T> b) noexcept {
     a.x /= b.x;
     a.y /= b.y;
@@ -533,16 +526,6 @@ operator/=(vec3<T>& v, T s) noexcept {
     return v;
 }
 
-template<real_scalar T>
-CUDA_RENDER_MATH_HD constexpr vec3<T>
-operator/=(T s, vec3<T> v) noexcept {
-    return{
-        s / v.x,
-        s / v.y,
-        s / v.z
-    };
-}
-
 // 内積
 template<real_scalar T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr T
@@ -579,8 +562,9 @@ cwise_mul(vec3<T> a, vec3<T> b) noexcept {
     };
 }
 
+// 戻り値を使わずに呼び出しても良いので， [[nodiscard]] は付けない
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>&
+CUDA_RENDER_MATH_HD constexpr vec3<T>&
 cwise_mul_assign(vec3<T>& a, vec3<T> b) noexcept {
     a.x *= b.x;
     a.y *= b.y;
@@ -599,8 +583,9 @@ cwise_div(vec3<T> a, vec3<T> b) noexcept {
     };
 }
 
+// 戻り値を使わずに呼び出しても良いので， [[nodiscard]] は付けない
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>&
+CUDA_RENDER_MATH_HD constexpr vec3<T>&
 cwise_div_assign(vec3<T>& a, vec3<T> b) noexcept {
     a.x /= b.x;
     a.y /= b.y;
@@ -741,7 +726,6 @@ operator/(T s, vec4<T> v) noexcept {
     };
 }
 
-
 // 複合代入演算子
 template<real_scalar T>
 CUDA_RENDER_MATH_HD constexpr vec4<T>&
@@ -803,17 +787,6 @@ operator/=(vec4<T>& v, T s) noexcept {
     return v;
 }
 
-template<real_scalar T>
-CUDA_RENDER_MATH_HD constexpr vec4<T>
-operator/=(T s, vec4<T> v) noexcept {
-    return{
-        s / v.x,
-        s / v.y,
-        s / v.z,
-        s / v.w
-    };
-}
-
 // 内積
 template<real_scalar T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr T
@@ -840,8 +813,9 @@ cwise_mul(vec4<T> a, vec4<T> b) noexcept {
     };
 }
 
+// 戻り値を使わずに呼び出しても良いので， [[nodiscard]] は付けない
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>&
+CUDA_RENDER_MATH_HD constexpr vec4<T>&
 cwise_mul_assign(vec4<T>& a, vec4<T> b) noexcept {
     a.x *= b.x;
     a.y *= b.y;
@@ -862,8 +836,9 @@ cwise_div(vec4<T> a, vec4<T> b) noexcept {
     };
 }
 
+// 戻り値を使わずに呼び出しても良いので， [[nodiscard]] は付けない
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>&
+CUDA_RENDER_MATH_HD constexpr vec4<T>&
 cwise_div_assign(vec4<T>& a, vec4<T> b) noexcept {
     a.x /= b.x;
     a.y /= b.y;
