@@ -36,7 +36,8 @@ consteval bool check_scalar_result_types() {
 static_assert(check_scalar_result_types<float>());
 static_assert(check_scalar_result_types<double>());
 static_assert(!can_sqrt<int> && !can_sqrt<long double>);
-static_assert(!can_abs<int> && !can_abs<long double>);
+static_assert(can_abs<std::int32_t> && can_abs<std::uint32_t>);
+static_assert(!can_abs<bool> && !can_abs<std::int64_t> && !can_abs<long double>);
 static_assert(!can_isfinite<int> && !can_isfinite<long double>);
 static_assert(!can_fma<float, double, float>);
 static_assert(!can_fma<double, float, double>);

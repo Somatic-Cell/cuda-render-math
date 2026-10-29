@@ -7,14 +7,14 @@ namespace cuda_render_math
 {
 
 // 2--4 次元の実数ベクトル
-template<real_scalar T> struct vec3;
-template<real_scalar T> struct vec3;
-template<real_scalar T> struct vec4;
+template<supported_arithmetic T> struct vec3;
+template<supported_arithmetic T> struct vec3;
+template<supported_arithmetic T> struct vec4;
 
 
 // デフォルトでは 0 で初期化
 // 単一の値を受け取ったときは全要素に複製して初期化する
-template<real_scalar T>
+template<supported_arithmetic T>
 struct vec2 {
     T x{};
     T y{};
@@ -35,7 +35,7 @@ struct vec2 {
     CUDA_RENDER_MATH_HD explicit constexpr vec2(vec4<T> v) noexcept;
 };
 
-template<real_scalar T>
+template<supported_arithmetic T>
 struct vec3 {
     T x{};
     T y{};
@@ -67,7 +67,7 @@ struct vec3 {
     CUDA_RENDER_MATH_HD explicit constexpr vec3(vec4<T> v) noexcept;
 };
 
-template<real_scalar T>
+template<supported_arithmetic T>
 struct vec4 {
     T x{};
     T y{};
@@ -113,15 +113,15 @@ struct vec4 {
 
 // 縮小するときは先頭部分を取り出す
 // 取り出すだけで正規化は行わない
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec2<T>::vec2(vec3<T> v) noexcept
     : x(v.x), y(v.y) {}
 
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec2<T>::vec2(vec4<T> v) noexcept
     : x(v.x), y(v.y) {}
 
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec3<T>::vec3(vec4<T> v) noexcept
     : x(v.x), y(v.y), z(v.z) {}
 
@@ -131,12 +131,18 @@ using vec3f = vec3<float>;
 using vec3d = vec3<double>;
 using vec4f = vec4<float>;
 using vec4d = vec4<double>;
+using vec2i = vec2<std::int32_t>;
+using vec3i = vec3<std::int32_t>;
+using vec4i = vec4<std::int32_t>;
+using vec2u = vec2<std::uint32_t>;
+using vec3u = vec3<std::uint32_t>;
+using vec4u = vec4<std::uint32_t>;
 
 // --------------------------
 // 2 次元実数ベクトルの計算
 // --------------------------
 // ベクトル型の型変換 float <-> double
-template<real_scalar To, real_scalar From>
+template<supported_arithmetic To, supported_arithmetic From>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<To>
 vector_cast(vec2<From> v) noexcept {
     return {
@@ -146,14 +152,15 @@ vector_cast(vec2<From> v) noexcept {
 }
 
 // 符号の変更
-template<real_scalar T>
+template<supported_arithmetic T>
+    requires (!std::same_as<T, std::uint32_t>)
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
 operator-(vec2<T> v) noexcept {
     return {-v.x, -v.y};
 }
 
 // 足し算
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
 operator+(vec2<T> a, vec2<T> b) noexcept {
     return {
@@ -162,7 +169,7 @@ operator+(vec2<T> a, vec2<T> b) noexcept {
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
 operator+(vec2<T> v, T s) noexcept {
     return {
@@ -171,7 +178,7 @@ operator+(vec2<T> v, T s) noexcept {
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
 operator+(T s, vec2<T> v) noexcept {
     return {
@@ -181,7 +188,7 @@ operator+(T s, vec2<T> v) noexcept {
 }
 
 // 引き算
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
 operator-(vec2<T> a, vec2<T> b) noexcept {
     return {
@@ -190,7 +197,7 @@ operator-(vec2<T> a, vec2<T> b) noexcept {
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
 operator-(vec2<T> v, T s) noexcept {
     return {
@@ -199,7 +206,7 @@ operator-(vec2<T> v, T s) noexcept {
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
 operator-(T s, vec2<T> v) noexcept {
     return {
@@ -211,7 +218,7 @@ operator-(T s, vec2<T> v) noexcept {
 // スカラとのかけ算 
 // ベクトル同士のかけ算は，内積，外積などが紛らわしいので，敢えて * では定義しない
 // 推論される T もそろえることで，意図しない異なる型の混在を拒否する
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
 operator*(vec2<T> v, T s) noexcept {
     return {
@@ -220,14 +227,14 @@ operator*(vec2<T> v, T s) noexcept {
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
 operator*(T s, vec2<T> v) noexcept {
     return v * s;
 }
 
 // スカラによる割り算
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
 operator/(vec2<T> v, T s) noexcept {
     return {
@@ -237,7 +244,7 @@ operator/(vec2<T> v, T s) noexcept {
 }
 
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
 operator/(T s, vec2<T> v) noexcept {
     return {
@@ -247,7 +254,7 @@ operator/(T s, vec2<T> v) noexcept {
 }
 
 // 複合代入演算子
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec2<T>&
 operator+=(vec2<T>& a, vec2<T> b) noexcept {
     a.x += b.x; 
@@ -255,7 +262,7 @@ operator+=(vec2<T>& a, vec2<T> b) noexcept {
     return a;
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec2<T>&
 operator+=(vec2<T>& v, T s) noexcept {
     v.x += s; 
@@ -264,7 +271,7 @@ operator+=(vec2<T>& v, T s) noexcept {
 }
 
 
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec2<T>&
 operator-=(vec2<T>& a, vec2<T> b) noexcept {
     a.x -= b.x; 
@@ -272,7 +279,7 @@ operator-=(vec2<T>& a, vec2<T> b) noexcept {
     return a;
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec2<T>&
 operator-=(vec2<T>& v, T s) noexcept {
     v.x -= s; 
@@ -280,7 +287,7 @@ operator-=(vec2<T>& v, T s) noexcept {
     return v;
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec2<T>&
 operator*=(vec2<T>& v, T s) noexcept {
     v.x *= s; 
@@ -288,7 +295,7 @@ operator*=(vec2<T>& v, T s) noexcept {
     return v;
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec2<T>&
 operator/=(vec2<T>& v, T s) noexcept {
     v.x /= s; 
@@ -297,21 +304,21 @@ operator/=(vec2<T>& v, T s) noexcept {
 }
 
 // 内積
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr T
 dot(vec2<T> a, vec2<T> b) noexcept{
     return a.x * b.x + a.y * b.y;
 }
 
 // 二乗ノルム
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr T
 length_squared(vec2<T> v) noexcept {
     return cuda_render_math::dot(v, v);
 }
 
 // 要素積
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
 cwise_mul(vec2<T> a, vec2<T> b) noexcept {
     return {
@@ -321,7 +328,7 @@ cwise_mul(vec2<T> a, vec2<T> b) noexcept {
 }
 
 // 戻り値を使わずに呼び出しても良いので， [[nodiscard]] は付けない
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec2<T>&
 cwise_mul_assign(vec2<T>& a, vec2<T> b) noexcept {
     a.x *= b.x;
@@ -330,7 +337,7 @@ cwise_mul_assign(vec2<T>& a, vec2<T> b) noexcept {
 }
 
 // 要素ごとの除算
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
 cwise_div(vec2<T> a, vec2<T> b) noexcept {
     return {
@@ -340,7 +347,7 @@ cwise_div(vec2<T> a, vec2<T> b) noexcept {
 }
 
 // 戻り値を使わずに呼び出しても良いので， [[nodiscard]] は付けない
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec2<T>&
 cwise_div_assign(vec2<T>& a, vec2<T> b) noexcept {
     a.x /= b.x;
@@ -352,7 +359,7 @@ cwise_div_assign(vec2<T>& a, vec2<T> b) noexcept {
 // 3 次元実数ベクトルの計算
 // --------------------------
 // ベクトル型の型変換 float <-> double
-template<real_scalar To, real_scalar From>
+template<supported_arithmetic To, supported_arithmetic From>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<To>
 vector_cast(vec3<From> v) noexcept {
     return {
@@ -363,14 +370,15 @@ vector_cast(vec3<From> v) noexcept {
 }
 
 // 符号の変更
-template<real_scalar T>
+template<supported_arithmetic T>
+    requires (!std::same_as<T, std::uint32_t>)
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
 operator-(vec3<T> v) noexcept {
     return {-v.x, -v.y, -v.z};
 }
 
 // 足し算
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
 operator+(vec3<T> a, vec3<T> b) noexcept {
     return {
@@ -380,7 +388,7 @@ operator+(vec3<T> a, vec3<T> b) noexcept {
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
 operator+(vec3<T> v, T s) noexcept {
     return {
@@ -390,7 +398,7 @@ operator+(vec3<T> v, T s) noexcept {
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
 operator+(T s, vec3<T> v) noexcept {
     return {
@@ -401,7 +409,7 @@ operator+(T s, vec3<T> v) noexcept {
 }
 
 // 引き算
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
 operator-(vec3<T> a, vec3<T> b) noexcept {
     return {
@@ -411,7 +419,7 @@ operator-(vec3<T> a, vec3<T> b) noexcept {
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
 operator-(vec3<T> v, T s) noexcept {
     return {
@@ -421,7 +429,7 @@ operator-(vec3<T> v, T s) noexcept {
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
 operator-(T s, vec3<T> v) noexcept {
     return {
@@ -434,7 +442,7 @@ operator-(T s, vec3<T> v) noexcept {
 // スカラとのかけ算 
 // ベクトル同士のかけ算は，内積，外積などが紛らわしいので，敢えて * では定義しない
 // 推論される T もそろえることで，意図しない異なる型の混在を拒否する
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
 operator*(vec3<T> v, T s) noexcept {
     return {
@@ -444,14 +452,14 @@ operator*(vec3<T> v, T s) noexcept {
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
 operator*(T s, vec3<T> v) noexcept {
     return v * s;
 }
 
 // スカラによる割り算
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
 operator/(vec3<T> v, T s) noexcept {
     return {
@@ -461,7 +469,7 @@ operator/(vec3<T> v, T s) noexcept {
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
 operator/(T s, vec3<T> v) noexcept {
     return {
@@ -472,7 +480,7 @@ operator/(T s, vec3<T> v) noexcept {
 }
 
 // 複合代入演算子
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec3<T>&
 operator+=(vec3<T>& a, vec3<T> b) noexcept {
     a.x += b.x; 
@@ -481,7 +489,7 @@ operator+=(vec3<T>& a, vec3<T> b) noexcept {
     return a;
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec3<T>&
 operator+=(vec3<T>& v, T s) noexcept {
     v.x += s; 
@@ -490,7 +498,7 @@ operator+=(vec3<T>& v, T s) noexcept {
     return v;
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec3<T>&
 operator-=(vec3<T>& a, vec3<T> b) noexcept {
     a.x -= b.x; 
@@ -499,7 +507,7 @@ operator-=(vec3<T>& a, vec3<T> b) noexcept {
     return a;
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec3<T>&
 operator-=(vec3<T>& v, T s) noexcept {
     v.x -= s; 
@@ -508,7 +516,7 @@ operator-=(vec3<T>& v, T s) noexcept {
     return v;
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec3<T>&
 operator*=(vec3<T>& v, T s) noexcept {
     v.x *= s; 
@@ -517,7 +525,7 @@ operator*=(vec3<T>& v, T s) noexcept {
     return v;
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec3<T>&
 operator/=(vec3<T>& v, T s) noexcept {
     v.x /= s; 
@@ -527,7 +535,7 @@ operator/=(vec3<T>& v, T s) noexcept {
 }
 
 // 内積
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr T
 dot(vec3<T> a, vec3<T> b) noexcept{
     return a.x * b.x + a.y * b.y + a.z * b.z;
@@ -545,14 +553,14 @@ cross(vec3<T> a, vec3<T> b) noexcept{
 }
 
 // 二乗ノルム
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr T
 length_squared(vec3<T> v) noexcept {
     return cuda_render_math::dot(v, v);
 }
 
 // 要素積
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
 cwise_mul(vec3<T> a, vec3<T> b) noexcept {
     return {
@@ -563,7 +571,7 @@ cwise_mul(vec3<T> a, vec3<T> b) noexcept {
 }
 
 // 戻り値を使わずに呼び出しても良いので， [[nodiscard]] は付けない
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec3<T>&
 cwise_mul_assign(vec3<T>& a, vec3<T> b) noexcept {
     a.x *= b.x;
@@ -573,7 +581,7 @@ cwise_mul_assign(vec3<T>& a, vec3<T> b) noexcept {
 }
 
 // 要素ごとの除算
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
 cwise_div(vec3<T> a, vec3<T> b) noexcept {
     return {
@@ -584,7 +592,7 @@ cwise_div(vec3<T> a, vec3<T> b) noexcept {
 }
 
 // 戻り値を使わずに呼び出しても良いので， [[nodiscard]] は付けない
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec3<T>&
 cwise_div_assign(vec3<T>& a, vec3<T> b) noexcept {
     a.x /= b.x;
@@ -597,7 +605,7 @@ cwise_div_assign(vec3<T>& a, vec3<T> b) noexcept {
 // 4 次元実数ベクトルの計算
 // --------------------------
 // ベクトル型の型変換 float <-> double
-template<real_scalar To, real_scalar From>
+template<supported_arithmetic To, supported_arithmetic From>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<To>
 vector_cast(vec4<From> v) noexcept {
     return {
@@ -609,14 +617,15 @@ vector_cast(vec4<From> v) noexcept {
 }
 
 // 符号の変更
-template<real_scalar T>
+template<supported_arithmetic T>
+    requires (!std::same_as<T, std::uint32_t>)
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
 operator-(vec4<T> v) noexcept {
     return {-v.x, -v.y, -v.z, -v.w};
 }
 
 // 足し算
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
 operator+(vec4<T> a, vec4<T> b) noexcept {
     return {
@@ -627,7 +636,7 @@ operator+(vec4<T> a, vec4<T> b) noexcept {
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
 operator+(vec4<T> v, T s) noexcept {
     return {
@@ -638,7 +647,7 @@ operator+(vec4<T> v, T s) noexcept {
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
 operator+(T s, vec4<T> v) noexcept {
     return {
@@ -650,7 +659,7 @@ operator+(T s, vec4<T> v) noexcept {
 }
 
 // 引き算
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
 operator-(vec4<T> a, vec4<T> b) noexcept {
     return {
@@ -661,7 +670,7 @@ operator-(vec4<T> a, vec4<T> b) noexcept {
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
 operator-(vec4<T> v, T s) noexcept {
     return {
@@ -672,7 +681,7 @@ operator-(vec4<T> v, T s) noexcept {
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
 operator-(T s, vec4<T> v) noexcept {
     return {
@@ -686,7 +695,7 @@ operator-(T s, vec4<T> v) noexcept {
 // スカラとのかけ算 
 // ベクトル同士のかけ算は，内積，外積などが紛らわしいので，敢えて * では定義しない
 // 推論される T もそろえることで，意図しない異なる型の混在を拒否する
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
 operator*(vec4<T> v, T s) noexcept {
     return {
@@ -697,14 +706,14 @@ operator*(vec4<T> v, T s) noexcept {
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
 operator*(T s, vec4<T> v) noexcept {
     return v * s;
 }
 
 // 割り算
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
 operator/(vec4<T> v, T s) noexcept {
     return {
@@ -715,7 +724,7 @@ operator/(vec4<T> v, T s) noexcept {
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
 operator/(T s, vec4<T> v) noexcept {
     return {
@@ -727,7 +736,7 @@ operator/(T s, vec4<T> v) noexcept {
 }
 
 // 複合代入演算子
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec4<T>&
 operator+=(vec4<T>& a, vec4<T> b) noexcept {
     a.x += b.x; 
@@ -737,7 +746,7 @@ operator+=(vec4<T>& a, vec4<T> b) noexcept {
     return a;
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec4<T>&
 operator+=(vec4<T>& v, T s) noexcept {
     v.x += s; 
@@ -747,7 +756,7 @@ operator+=(vec4<T>& v, T s) noexcept {
     return v;
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec4<T>&
 operator-=(vec4<T>& a, vec4<T> b) noexcept {
     a.x -= b.x; 
@@ -757,7 +766,7 @@ operator-=(vec4<T>& a, vec4<T> b) noexcept {
     return a;
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec4<T>&
 operator-=(vec4<T>& v, T s) noexcept {
     v.x -= s; 
@@ -767,7 +776,7 @@ operator-=(vec4<T>& v, T s) noexcept {
     return v;
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec4<T>&
 operator*=(vec4<T>& v, T s) noexcept {
     v.x *= s; 
@@ -777,7 +786,7 @@ operator*=(vec4<T>& v, T s) noexcept {
     return v;
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec4<T>&
 operator/=(vec4<T>& v, T s) noexcept {
     v.x /= s; 
@@ -788,21 +797,21 @@ operator/=(vec4<T>& v, T s) noexcept {
 }
 
 // 内積
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr T
 dot(vec4<T> a, vec4<T> b) noexcept{
     return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
 }
 
 // 二乗ノルム
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr T
 length_squared(vec4<T> v) noexcept {
     return cuda_render_math::dot(v, v);
 }
 
 // 要素積
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
 cwise_mul(vec4<T> a, vec4<T> b) noexcept {
     return {
@@ -814,7 +823,7 @@ cwise_mul(vec4<T> a, vec4<T> b) noexcept {
 }
 
 // 戻り値を使わずに呼び出しても良いので， [[nodiscard]] は付けない
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec4<T>&
 cwise_mul_assign(vec4<T>& a, vec4<T> b) noexcept {
     a.x *= b.x;
@@ -825,7 +834,7 @@ cwise_mul_assign(vec4<T>& a, vec4<T> b) noexcept {
 }
 
 // 要素ごとの除算
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
 cwise_div(vec4<T> a, vec4<T> b) noexcept {
     return {
@@ -837,7 +846,7 @@ cwise_div(vec4<T> a, vec4<T> b) noexcept {
 }
 
 // 戻り値を使わずに呼び出しても良いので， [[nodiscard]] は付けない
-template<real_scalar T>
+template<supported_arithmetic T>
 CUDA_RENDER_MATH_HD constexpr vec4<T>&
 cwise_div_assign(vec4<T>& a, vec4<T> b) noexcept {
     a.x /= b.x;

@@ -5,6 +5,10 @@
 
 namespace cuda_render_math {
 
+// =============================
+// 浮動小数点小数
+// =============================
+
 // -------------------------
 // 2 次元
 // -------------------------
@@ -45,7 +49,7 @@ fract(vec2<T> v) noexcept {
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec2<T>
 (min)(vec2<T> a, vec2<T> b) noexcept {
     return {
@@ -54,7 +58,7 @@ template<real_scalar T>
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec2<T>
 (min)(vec2<T> a, T b) noexcept {
     return {
@@ -63,7 +67,7 @@ template<real_scalar T>
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec2<T>
 (min)(T a, vec2<T> b) noexcept {
     return {
@@ -72,7 +76,7 @@ template<real_scalar T>
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec2<T>
 (max)(vec2<T> a, vec2<T> b) noexcept {
     return {
@@ -81,7 +85,7 @@ template<real_scalar T>
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec2<T>
 (max)(vec2<T> a, T b) noexcept {
     return {
@@ -90,7 +94,7 @@ template<real_scalar T>
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec2<T>
 (max)(T a, vec2<T> b) noexcept {
     return {
@@ -233,7 +237,7 @@ fract(vec3<T> v) noexcept {
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec3<T>
 (min)(vec3<T> a, vec3<T> b) noexcept {
     return {
@@ -243,7 +247,7 @@ template<real_scalar T>
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec3<T>
 (min)(vec3<T> a, T b) noexcept {
     return {
@@ -253,7 +257,7 @@ template<real_scalar T>
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec3<T>
 (min)(T a, vec3<T> b) noexcept {
     return {
@@ -263,7 +267,7 @@ template<real_scalar T>
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec3<T>
 (max)(vec3<T> a, vec3<T> b) noexcept {
     return {
@@ -273,7 +277,7 @@ template<real_scalar T>
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec3<T>
 (max)(vec3<T> a, T b) noexcept {
     return {
@@ -283,7 +287,7 @@ template<real_scalar T>
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec3<T>
 (max)(T a, vec3<T> b) noexcept {
     return {
@@ -442,7 +446,7 @@ fract(vec4<T> v) noexcept {
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec4<T>
 (min)(vec4<T> a, vec4<T> b) noexcept {
     return {
@@ -453,7 +457,7 @@ template<real_scalar T>
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec4<T>
 (min)(vec4<T> a, T b) noexcept {
     return {
@@ -464,7 +468,7 @@ template<real_scalar T>
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec4<T>
 (min)(T a, vec4<T> b) noexcept {
     return {
@@ -475,7 +479,7 @@ template<real_scalar T>
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec4<T>
 (max)(vec4<T> a, vec4<T> b) noexcept {
     return {
@@ -486,7 +490,7 @@ template<real_scalar T>
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec4<T>
 (max)(vec4<T> a, T b) noexcept {
     return {
@@ -497,7 +501,7 @@ template<real_scalar T>
     };
 }
 
-template<real_scalar T>
+template<supported_arithmetic T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec4<T>
 (max)(T a, vec4<T> b) noexcept {
     return {
@@ -617,5 +621,182 @@ smoothstep(T lower, T upper, vec4<T> x) noexcept {
         cuda_render_math::smoothstep(lower, upper, x.w)
     };
 }
+
+// =============================
+// 整数
+// =============================
+
+
+// -------------------------
+// 2 次元
+// -------------------------
+
+template<integer_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
+abs(vec2<T> value) noexcept {
+    return {
+        cuda_render_math::abs(value.x), 
+        cuda_render_math::abs(value.y)
+    };
+}
+
+template<integer_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
+clamp(vec2<T> value, vec2<T> lower, vec2<T> upper) noexcept {
+    return {
+        cuda_render_math::clamp(value.x, lower.x, upper.x), 
+        cuda_render_math::clamp(value.y, lower.y, upper.y)
+    };
+}
+
+template<integer_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec2<T>
+clamp(vec2<T> value, T lower, T upper) noexcept {
+    return {
+        cuda_render_math::clamp(value.x, lower, upper), 
+        cuda_render_math::clamp(value.y, lower, upper)
+    };
+}
+
+template<integer_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr bool
+try_clamp(vec2<T> value, vec2<T> lower, vec2<T> upper, vec2<T>& output) noexcept {
+    if(
+        upper.x < lower.x ||
+        upper.y < lower.y
+    )
+    {
+        return false;
+    }
+    output = cuda_render_math::clamp(value, lower, upper);
+    return true;
+}
+
+template<integer_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr bool
+try_clamp(vec2<T> value, T lower, T upper, vec2<T> &output) noexcept {
+    return cuda_render_math::try_clamp(value, vec2<T>(lower), vec2<T>(upper), output);
+}
+
+
+// -------------------------
+// 3 次元
+// -------------------------
+
+template<integer_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
+abs(vec3<T> value) noexcept {
+    return {
+        cuda_render_math::abs(value.x), 
+        cuda_render_math::abs(value.y),
+        cuda_render_math::abs(value.z)
+    };
+}
+
+template<integer_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
+clamp(vec3<T> value, vec3<T> lower, vec3<T> upper) noexcept {
+    return {
+        cuda_render_math::clamp(value.x, lower.x, upper.x), 
+        cuda_render_math::clamp(value.y, lower.y, upper.y),
+        cuda_render_math::clamp(value.z, lower.z, upper.z)
+    };
+}
+
+template<integer_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
+clamp(vec3<T> value, T lower, T upper) noexcept {
+    return {
+        cuda_render_math::clamp(value.x, lower, upper), 
+        cuda_render_math::clamp(value.y, lower, upper),
+        cuda_render_math::clamp(value.z, lower, upper)
+    };
+}
+
+template<integer_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr bool
+try_clamp(vec3<T> value, vec3<T> lower, vec3<T> upper, vec3<T>& output) noexcept {
+    if(
+        upper.x < lower.x ||
+        upper.y < lower.y ||
+        upper.z < lower.z
+    )
+    {
+        return false;
+    }
+    output = cuda_render_math::clamp(value, lower, upper);
+    return true;
+}
+
+template<integer_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr bool
+try_clamp(vec3<T> value, T lower, T upper, vec3<T> &output) noexcept {
+    return cuda_render_math::try_clamp(value, vec3<T>(lower), vec3<T>(upper), output);
+}
+
+// -------------------------
+// 4 次元
+// -------------------------
+
+template<integer_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
+abs(vec4<T> value) noexcept {
+    return {
+        cuda_render_math::abs(value.x), 
+        cuda_render_math::abs(value.y),
+        cuda_render_math::abs(value.z),
+        cuda_render_math::abs(value.w)
+    };
+}
+
+template<integer_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
+clamp(vec4<T> value, vec4<T> lower, vec4<T> upper) noexcept {
+    return {
+        cuda_render_math::clamp(value.x, lower.x, upper.x), 
+        cuda_render_math::clamp(value.y, lower.y, upper.y),
+        cuda_render_math::clamp(value.z, lower.z, upper.z),
+        cuda_render_math::clamp(value.w, lower.w, upper.w)
+    };
+}
+
+template<integer_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec4<T>
+clamp(vec4<T> value, T lower, T upper) noexcept {
+    return {
+        cuda_render_math::clamp(value.x, lower, upper), 
+        cuda_render_math::clamp(value.y, lower, upper),
+        cuda_render_math::clamp(value.z, lower, upper),
+        cuda_render_math::clamp(value.w, lower, upper)
+    };
+}
+
+template<integer_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr bool
+try_clamp(vec4<T> value, vec4<T> lower, vec4<T> upper, vec4<T>& output) noexcept {
+    if(
+        upper.x < lower.x ||
+        upper.y < lower.y ||
+        upper.z < lower.z || 
+        upper.w < lower.w
+    )
+    {
+        return false;
+    }
+    output = cuda_render_math::clamp(value, lower, upper);
+    return true;
+}
+
+template<integer_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr bool
+try_clamp(vec4<T> value, T lower, T upper, vec4<T> &output) noexcept {
+    return cuda_render_math::try_clamp(value, vec4<T>(lower), vec4<T>(upper), output);
+}
+
+
+
+
+
+
 
 }

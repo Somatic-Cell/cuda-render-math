@@ -3,6 +3,7 @@
 #include <cuda_render_math/config.hpp>
 #include <cuda_render_math/scalar.hpp>
 
+#include <cassert>
 #include <cmath>
 #include <limits>
 
@@ -11,6 +12,10 @@ namespace cuda_render_math {
 // CPU での計算では cmath, NVCC の device pass では CUDA Math API を使う
 // NaN / Inf / 符号付きゼロの扱いは IEEE 754 を基本とする
 // 入力のクランプや NaN を 0 にフォールバックしたりはしない
+
+// -----------------
+// 浮動小数点小数
+// -----------------
 
 // 絶対値
 template<real_scalar T>
@@ -228,6 +233,49 @@ smoothstep(T lower, T upper, T x) noexcept {
     const T u = cuda_render_math::saturate(t); 
     return cuda_render_math::saturate(u * u * (T(3) - T(2) * u));
 
+}
+
+// -----------------
+// 整数
+// -----------------
+
+template<integer_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr T
+(min)(T a, T b) noexcept {
+    return b < a ? b : a;
+}
+
+template<integer_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr T
+(max)(T a, T b) noexcept {
+    return a < b ? b : a;
+}
+
+template<integer_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr T
+clamp(T value, T lower, T upper) noexcept {
+    assert(lower <= upper);
+    return value < lower ? lower : (upper < value ? upper : value);
+}
+
+template<integer_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr bool
+try_clamp(T value, T lower, T upper, T& output) noexcept {
+    if(upper < lower) return false;
+    output = cuda_render_math::clamp(value, lower, upper);
+    return true;
+}
+
+// 絶対値
+template<integer_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr T
+abs(T value) noexcept {
+    if constexpr (std::same_as<T, std::int32_t>) {
+        assert(value != T(-2147483647 - 1));
+        return value < T(0) ? -value : value;
+    } else {
+        return value;
+    }
 }
 
 

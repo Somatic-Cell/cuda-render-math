@@ -71,6 +71,11 @@ if(CUDA_RENDER_MATH_BUILD_TESTS)
         COMMAND vector_component_test
     )
 
+    add_executable(integer_vector_test tests/integer_vector_test.cpp)
+    cuda_render_math_configure_test(integer_vector_test)
+    add_test(NAME cuda_render_math.integer_vector COMMAND integer_vector_test)
+
+
 
     # スカラ
     add_executable(scalar_math_test
@@ -89,6 +94,11 @@ if(CUDA_RENDER_MATH_BUILD_TESTS)
         COMMAND scalar_utilities_test
     )
 
+    # 型のキャスト
+    add_executable(numeric_cast_test tests/numeric_cast_test.cpp)
+    cuda_render_math_configure_test(numeric_cast_test)
+    add_test(NAME cuda_render_math.numeric_cast COMMAND numeric_cast_test)
+
     
 
     # 意図的に多重インクルードさせるテスト
@@ -100,7 +110,9 @@ if(CUDA_RENDER_MATH_BUILD_TESTS)
         list(APPEND header_check_sources "${source}")
     endforeach()
     add_library(cuda_render_math_header_checks OBJECT 
-        ${header_check_sources} tests/minmax_macro_check.cpp
+        ${header_check_sources} 
+        tests/minmax_macro_check.cpp
+        tests/integer_minmax_macro_check.cpp
     )
     cuda_render_math_configure_test(cuda_render_math_header_checks)    
 endif()
@@ -114,6 +126,7 @@ if(CUDA_RENDER_MATH_BUILD_CUDA_CHECK)
     add_library(cuda_render_math_cuda_check OBJECT 
         tests/cuda_compile_check.cu
         tests/cuda_component_check.cu
+        tests/cuda_integer_check.cu
     )
     target_link_libraries(cuda_render_math_cuda_check
         PRIVATE cuda_render_math::cuda_render_math)

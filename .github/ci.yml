@@ -1,0 +1,99 @@
+name: C++ and CUDA checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+# Builds only read repository contents. No credentials for publishing are needed.
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  host-tests:
+    name: ${{ matrix.platform.compiler }} / ${{ matrix.build_type }}
+    runs-on: ${{ matrix.platform.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Debug, Release]
+        platform:
+          - { os: ubuntu-24.04, compiler: GCC, cxx: g++ }
+          - { os: ubuntu-24.04, compiler: Clang, cxx: clang++ }
+          - { os: windows-2022, compiler: MSVC, cxx: cl }
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Configure Linux host tests
+        if: runner.os == 'Linux'
+        run: >-
+          cmake -S . -B build -G Ninja
+          -DCMAKE_CXX_COMPILER=${{ matrix.platform.cxx }}
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          -DCUDA_RENDER_MATH_BUILD_TESTS=ON
+          -DCUDA_RENDER_MATH_BUILD_CUDA_CHECK=OFF
+          -DCUDA_RENDER_MATH_WARNINGS_AS_ERRORS=ON
+
+      - name: Configure Windows host tests
+        if: runner.os == 'Windows'
+        run: >-
+          cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+          -DCUDA_RENDER_MATH_BUILD_TESTS=ON
+          -DCUDA_RENDER_MATH_BUILD_CUDA_CHECK=OFF
+          -DCUDA_RENDER_MATH_WARNINGS_AS_ERRORS=ON
+
+      - name: Build host tests and header checks
+        run: cmake --build build --config ${{ matrix.build_type }} --parallel 2
+
+      - name: Run host tests
+        run: ctest --test-dir build -C ${{ matrix.build_type }} --output-on-failure --no-tests=error
+
+  cuda-compile:
+    name: CUDA 12.8 / PTX compilation only
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    # Pin the official NVIDIA development image; this is not a GPU runner.
+    container:
+      image: nvidia/cuda:12.8.1-devel-ubuntu24.04@sha256:520292dbb4f755fd360766059e62956e9379485d9e073bbd2f6e3c20c270ed66
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Install build tools
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends ca-certificates git g++ cmake ninja-build
+
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Show toolchain versions
+        run: |
+          nvcc --version
+          g++ --version
+          cmake --version
+
+      - name: Configure PTX compilation checks
+        # A specified virtual architecture avoids depending on the runner's GPU.
+        # This is a compatibility target, not a limit on the user's GPU model.
+        run: >-
+          cmake -S . -B build-cuda -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_CUDA_ARCHITECTURES=86
+          -DCUDA_RENDER_MATH_BUILD_TESTS=OFF
+          -DCUDA_RENDER_MATH_BUILD_CUDA_CHECK=ON
+
+      - name: Compile CUDA headers and operations to PTX
+        run: cmake --build build-cuda --target cuda_render_math_cuda_check --parallel 2
