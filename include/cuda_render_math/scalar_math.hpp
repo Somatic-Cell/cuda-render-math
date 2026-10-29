@@ -192,6 +192,10 @@ lerp(T a, T b, T t) noexcept {
     {
         return detail::quiet_nan<T>();
     }
+
+    if(t == T(0)) return a;
+    if(t == T(1)) return b;
+    if(a == b) return a;
     // a, b が逆符号: 
     const T result = ((a < T(0)) != (b < T(0))) 
         ? (T(1) - t) * a + t * b 

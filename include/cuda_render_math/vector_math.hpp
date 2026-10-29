@@ -46,7 +46,7 @@ fract(vec2<T> v) noexcept {
 }
 
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD inline vec2<T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec2<T>
 (min)(vec2<T> a, vec2<T> b) noexcept {
     return {
         (cuda_render_math::min)(a.x, b.x),
@@ -55,7 +55,7 @@ template<real_scalar T>
 }
 
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD inline vec2<T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec2<T>
 (min)(vec2<T> a, T b) noexcept {
     return {
         (cuda_render_math::min)(a.x, b),
@@ -64,7 +64,7 @@ template<real_scalar T>
 }
 
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD inline vec2<T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec2<T>
 (min)(T a, vec2<T> b) noexcept {
     return {
         (cuda_render_math::min)(a, b.x),
@@ -73,7 +73,7 @@ template<real_scalar T>
 }
 
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD inline vec2<T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec2<T>
 (max)(vec2<T> a, vec2<T> b) noexcept {
     return {
         (cuda_render_math::max)(a.x, b.x),
@@ -82,7 +82,7 @@ template<real_scalar T>
 }
 
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD inline vec2<T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec2<T>
 (max)(vec2<T> a, T b) noexcept {
     return {
         (cuda_render_math::max)(a.x, b),
@@ -91,7 +91,7 @@ template<real_scalar T>
 }
 
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD inline vec2<T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec2<T>
 (max)(T a, vec2<T> b) noexcept {
     return {
         (cuda_render_math::max)(a, b.x),
@@ -234,7 +234,7 @@ fract(vec3<T> v) noexcept {
 }
 
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD inline vec3<T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec3<T>
 (min)(vec3<T> a, vec3<T> b) noexcept {
     return {
         (cuda_render_math::min)(a.x, b.x),
@@ -244,7 +244,7 @@ template<real_scalar T>
 }
 
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD inline vec3<T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec3<T>
 (min)(vec3<T> a, T b) noexcept {
     return {
         (cuda_render_math::min)(a.x, b),
@@ -254,7 +254,7 @@ template<real_scalar T>
 }
 
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD inline vec3<T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec3<T>
 (min)(T a, vec3<T> b) noexcept {
     return {
         (cuda_render_math::min)(a, b.x),
@@ -264,7 +264,7 @@ template<real_scalar T>
 }
 
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD inline vec3<T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec3<T>
 (max)(vec3<T> a, vec3<T> b) noexcept {
     return {
         (cuda_render_math::max)(a.x, b.x),
@@ -274,7 +274,7 @@ template<real_scalar T>
 }
 
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD inline vec3<T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec3<T>
 (max)(vec3<T> a, T b) noexcept {
     return {
         (cuda_render_math::max)(a.x, b),
@@ -284,7 +284,7 @@ template<real_scalar T>
 }
 
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD inline vec3<T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec3<T>
 (max)(T a, vec3<T> b) noexcept {
     return {
         (cuda_render_math::max)(a, b.x),
@@ -443,7 +443,7 @@ fract(vec4<T> v) noexcept {
 }
 
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD inline vec4<T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec4<T>
 (min)(vec4<T> a, vec4<T> b) noexcept {
     return {
         (cuda_render_math::min)(a.x, b.x),
@@ -454,7 +454,7 @@ template<real_scalar T>
 }
 
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD inline vec4<T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec4<T>
 (min)(vec4<T> a, T b) noexcept {
     return {
         (cuda_render_math::min)(a.x, b),
@@ -465,7 +465,7 @@ template<real_scalar T>
 }
 
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD inline vec4<T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec4<T>
 (min)(T a, vec4<T> b) noexcept {
     return {
         (cuda_render_math::min)(a, b.x),
@@ -476,7 +476,7 @@ template<real_scalar T>
 }
 
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD inline vec4<T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec4<T>
 (max)(vec4<T> a, vec4<T> b) noexcept {
     return {
         (cuda_render_math::max)(a.x, b.x),
@@ -487,7 +487,7 @@ template<real_scalar T>
 }
 
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD inline vec4<T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec4<T>
 (max)(vec4<T> a, T b) noexcept {
     return {
         (cuda_render_math::max)(a.x, b),
@@ -498,7 +498,7 @@ template<real_scalar T>
 }
 
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD inline vec4<T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline constexpr vec4<T>
 (max)(T a, vec4<T> b) noexcept {
     return {
         (cuda_render_math::max)(a, b.x),
