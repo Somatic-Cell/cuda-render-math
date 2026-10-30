@@ -52,9 +52,9 @@ template<real_scalar T>
 fma(T x, T y, T z) noexcept {
 #if defined (__CUDA_ARCH__)
     if constexpr (std::same_as<T, float>) {
-        return ::fmaf(x, y, z);
+        return ::__fmaf_rn(x, y, z);
     } else {
-        return ::fma(x, y, z);
+        return ::__fma_rn(x, y, z);
     }
 #else
     return std::fma(x, y, z);

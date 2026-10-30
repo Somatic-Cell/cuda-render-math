@@ -19,6 +19,10 @@ option(CUDA_RENDER_MATH_BUILD_TESTS
 option(CUDA_RENDER_MATH_BUILD_CUDA_CHECK
     "Compile the header checks to PTX without GPU execution" OFF
 )
+option(CUDA_RENDER_MATH_WARNINGS_AS_ERRORS
+    "Treat host test and header-check warnings as errors" OFF
+)
+
 
 
 if(CUDA_RENDER_MATH_BUILD_TESTS)
@@ -38,6 +42,13 @@ if(CUDA_RENDER_MATH_BUILD_TESTS)
         elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
             target_compile_options(${target} PRIVATE
                 -Wall -Wextra -Wpedantic -Wconversion)
+        endif()
+        if(CUDA_RENDER_MATH_WARNINGS_AS_ERRORS)
+            if(MSVC)
+                target_compile_options(${target} PRIVATE /WX)
+            elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+                target_compile_options(${target} PRIVATE -Werror)
+            endif()
         endif()
     endfunction()
 
@@ -94,6 +105,22 @@ if(CUDA_RENDER_MATH_BUILD_TESTS)
         COMMAND scalar_utilities_test
     )
 
+    add_executable(scalar_numerics_test tests/scalar_numerics_test.cpp)
+    add_executable(vector_norm_test tests/vector_norm_test.cpp tests/vector_geometry_linkage.cpp)
+    add_executable(vector_numerics_test tests/vector_numerics_test.cpp)
+    foreach(target IN ITEMS scalar_numerics_test vector_norm_test vector_numerics_test)
+        cuda_render_math_configure_test(${target})
+        # Test the documented IEEE-mode contract; do not export these options.
+        if(MSVC)
+            target_compile_options(${target} PRIVATE /fp:precise)
+        elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+            target_compile_options(${target} PRIVATE -fno-fast-math -ffp-contract=off)
+        endif()
+    endforeach()
+    add_test(NAME cuda_render_math.scalar_numerics COMMAND scalar_numerics_test)
+    add_test(NAME cuda_render_math.vector_norm COMMAND vector_norm_test)
+    add_test(NAME cuda_render_math.vector_numerics COMMAND vector_numerics_test)
+
     # 型のキャスト
     add_executable(numeric_cast_test tests/numeric_cast_test.cpp)
     cuda_render_math_configure_test(numeric_cast_test)
@@ -113,6 +140,7 @@ if(CUDA_RENDER_MATH_BUILD_TESTS)
         ${header_check_sources} 
         tests/minmax_macro_check.cpp
         tests/integer_minmax_macro_check.cpp
+        tests/geometry_minmax_macro_check.cpp
     )
     cuda_render_math_configure_test(cuda_render_math_header_checks)    
 endif()
@@ -127,6 +155,7 @@ if(CUDA_RENDER_MATH_BUILD_CUDA_CHECK)
         tests/cuda_compile_check.cu
         tests/cuda_component_check.cu
         tests/cuda_integer_check.cu
+        tests/cuda_geometry_check.cu
     )
     target_link_libraries(cuda_render_math_cuda_check
         PRIVATE cuda_render_math::cuda_render_math)
