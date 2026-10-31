@@ -544,7 +544,7 @@ dot(vec3<T> a, vec3<T> b) noexcept{
 // 外積 (右手系)
 template<real_scalar T>
 [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T>
-cross(vec3<T> a, vec3<T> b) noexcept{
+cross_uncompensated(vec3<T> a, vec3<T> b) noexcept{
     return {
         a.y * b.z - a.z * b.y,   
         a.z * b.x - a.x * b.z,   

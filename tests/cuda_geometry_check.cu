@@ -16,6 +16,7 @@ __device__ void exercise_geometry(V* vectors, decltype(V{}.x)* scalars,
     vectors[2] = input;
     valid[2] = rm::try_normalize(vectors[2], vectors[2]);
     vectors[3] = rm::reflect(input, unit_normal);
+    vectors[4] = rm::reflect_from_outward(input, unit_normal);
     scalars[2] = rm::sqrt_clamped(input.x);
     scalars[3] = rm::asin_clamped(input.x);
     scalars[4] = rm::acos_clamped(input.x);
@@ -24,7 +25,7 @@ __device__ void exercise_geometry(V* vectors, decltype(V{}.x)* scalars,
 } // namespace
 
 // Compile-only entry points: no kernel launches and no Runtime API host calls.
-// Per dimensionality, a launch would need 4 vectors, 6 scalars, and 3 booleans.
+// Per dimensionality, a launch would need 5 vectors, 6 scalars, and 3 booleans.
 extern "C" __global__ void cuda_render_math_geometry_float(
     rm::vec2f* v2, rm::vec3f* v3, rm::vec4f* v4,
     float* scalars, bool* valid, rm::vec2f a2, rm::vec3f a3, rm::vec4f a4) {
@@ -43,8 +44,8 @@ extern "C" __global__ void cuda_render_math_geometry_double(
 
 extern "C" __global__ void cuda_render_math_compensated_cross(
     rm::vec3f* f, rm::vec3d* d, rm::vec3f a, rm::vec3f b, rm::vec3d c, rm::vec3d e) {
-    f[0] = rm::cross_compensated(a, b);
-    d[0] = rm::cross_compensated(c, e);
+    f[0] = rm::cross(a, b);
+    d[0] = rm::cross(c, e);
 }
 
 // Also instantiate host implementations during nvcc's host pass.

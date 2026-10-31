@@ -1,4 +1,4 @@
-#include <cuda_render_math/vector.hpp>
+#include <cuda_render_math/vector_geometry.hpp>
 
 #include "vector_test_support.hpp"
 
@@ -14,6 +14,8 @@ template<typename L, typename R>
 concept can_dot = requires(L a, R b) { rm::dot(a, b); };
 template<typename L, typename R>
 concept can_cross = requires(L a, R b) { rm::cross(a, b); };
+static_assert(std::same_as<decltype(rm::cross(rm::vec3f{}, rm::vec3f{})), rm::vec3f>);
+static_assert(std::same_as<decltype(rm::cross(rm::vec3d{}, rm::vec3d{})), rm::vec3d>);
 
 template<typename V, typename W>
 consteval bool check_rejected_dot() {
@@ -49,7 +51,7 @@ consteval bool check_vector_math() {
     static_assert(std::same_as<decltype(rm::dot(V3{}, V3{})), T>);
     static_assert(std::same_as<decltype(rm::length_squared(V2{})), T>);
     static_assert(std::same_as<decltype(rm::length_squared(V3{})), T>);
-    static_assert(std::same_as<decltype(rm::cross(V3{}, V3{})), V3>);
+    static_assert(std::same_as<decltype(rm::cross_uncompensated(V3{}, V3{})), V3>);
     static_assert(std::same_as<decltype(rm::dot(V4{}, V4{})), T>);
     static_assert(std::same_as<decltype(rm::length_squared(V4{})), T>);
     const V3 x{T(1), T(0), T(0)};
@@ -64,10 +66,10 @@ consteval bool check_vector_math() {
            rm::length_squared(V2{T(3), T(4)}) == T(25) &&
            rm::dot(a, b) == T(32) && rm::length_squared(a) == T(14) &&
            rm::length_squared(V3{}) == T(0) &&
-           ts::equal(rm::cross(x, y), z) && ts::equal(rm::cross(y, z), x) &&
-           ts::equal(rm::cross(z, x), y) && ts::equal(rm::cross(y, x), -z) &&
-           ts::equal(rm::cross(a, b), V3{T(-3), T(6), T(-3)}) &&
-           ts::equal(rm::cross(a, a), V3{}) && rm::dot(rm::cross(a, b), a) == T(0);
+           ts::equal(rm::cross_uncompensated(x, y), z) && ts::equal(rm::cross_uncompensated(y, z), x) &&
+           ts::equal(rm::cross_uncompensated(z, x), y) && ts::equal(rm::cross_uncompensated(y, x), -z) &&
+           ts::equal(rm::cross_uncompensated(a, b), V3{T(-3), T(6), T(-3)}) &&
+           ts::equal(rm::cross_uncompensated(a, a), V3{}) && rm::dot(rm::cross_uncompensated(a, b), a) == T(0);
 }
 static_assert(check_vector_math<float>());
 static_assert(check_vector_math<double>());

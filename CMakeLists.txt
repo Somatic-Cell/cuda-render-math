@@ -121,6 +121,10 @@ if(CUDA_RENDER_MATH_BUILD_TESTS)
     add_test(NAME cuda_render_math.vector_norm COMMAND vector_norm_test)
     add_test(NAME cuda_render_math.vector_numerics COMMAND vector_numerics_test)
 
+    add_executable(rounded_arithmetic_test tests/rounded_arithmetic_test.cpp)
+    cuda_render_math_configure_test(rounded_arithmetic_test)
+    add_test(NAME cuda_render_math.rounded_arithmetic COMMAND rounded_arithmetic_test)
+
     # 型のキャスト
     add_executable(numeric_cast_test tests/numeric_cast_test.cpp)
     cuda_render_math_configure_test(numeric_cast_test)
@@ -156,6 +160,7 @@ if(CUDA_RENDER_MATH_BUILD_CUDA_CHECK)
         tests/cuda_component_check.cu
         tests/cuda_integer_check.cu
         tests/cuda_geometry_check.cu
+        tests/cuda_rounding_check.cu
     )
     target_link_libraries(cuda_render_math_cuda_check
         PRIVATE cuda_render_math::cuda_render_math)

@@ -1,3 +1,4 @@
+#include <cuda_render_math/vector_geometry.hpp>
 #include <cuda_render_math/vector_math.hpp>
 #include "vector_test_support.hpp"
 

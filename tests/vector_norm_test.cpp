@@ -24,6 +24,11 @@ template<typename V> concept can_normalize = requires(V v) { rm::normalize(v); }
 template<typename V, typename O> concept can_try_normalize = requires(V v, O& out) {
     rm::try_normalize(v, out);
 };
+template<typename V, typename N>
+concept can_reflect_from_outward = requires(V v, N n) { rm::reflect_from_outward(v, n); };
+static_assert(!can_reflect_from_outward<rm::vec3f, rm::vec3d>);
+static_assert(!can_reflect_from_outward<rm::vec2f, rm::vec3f>);
+static_assert(!can_reflect_from_outward<rm::vec3i, rm::vec3i>);
 template<typename V, typename N> concept can_reflect = requires(V v, N n) { rm::reflect(v, n); };
 static_assert(!can_length<rm::vec2i> && !can_normalize<rm::vec3u>);
 static_assert(!can_length<rm::vec4i> && !can_normalize<float>);
@@ -40,6 +45,8 @@ consteval bool check_signature() {
     static_assert(std::same_as<decltype(rm::is_all_finite(V{})), bool>);
     static_assert(std::same_as<decltype(rm::normalize(V{})), V>);
     static_assert(std::same_as<decltype(rm::reflect(V{}, V{})), V>);
+    static_assert(std::same_as<decltype(rm::reflect_from_outward(V{}, V{})), V>);
+    static_assert(noexcept(rm::reflect_from_outward(V{}, V{})));
     static_assert(can_try_normalize<V, V>);
     static_assert(noexcept(rm::length(V{})) && noexcept(rm::normalize(V{})));
     return true;

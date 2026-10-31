@@ -79,11 +79,15 @@ reflect(
     
     const T projection = cuda_render_math::dot(incident, unit_normal);
     return {
-        cuda_render_math::fma(-projection, unit_normal.x,
-            cuda_render_math::fma(-projection, unit_normal.x, incident.x)),
-        cuda_render_math::fma(-projection, unit_normal.y,
-            cuda_render_math::fma(-projection, unit_normal.y, incident.y))
+        cuda_render_math::fma(-projection, detail::mul_rn(T(2), unit_normal.x), incident.x),
+        cuda_render_math::fma(-projection, detail::mul_rn(T(2), unit_normal.y), incident.y)
     };
+}
+
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline vec2<T>
+reflect_from_outward(vec2<T> outward, vec2<T> unit_normal) noexcept {
+    return cuda_render_math::reflect(-outward, unit_normal);
 }
 
 // -------------------
@@ -164,13 +168,16 @@ reflect(
     
     const T projection = cuda_render_math::dot(incident, unit_normal);
     return {
-        cuda_render_math::fma(-projection, unit_normal.x,
-            cuda_render_math::fma(-projection, unit_normal.x, incident.x)),
-        cuda_render_math::fma(-projection, unit_normal.y,
-            cuda_render_math::fma(-projection, unit_normal.y, incident.y)),
-        cuda_render_math::fma(-projection, unit_normal.z,
-            cuda_render_math::fma(-projection, unit_normal.z, incident.z))
+        cuda_render_math::fma(-projection, detail::mul_rn(T(2), unit_normal.x), incident.x),
+        cuda_render_math::fma(-projection, detail::mul_rn(T(2), unit_normal.y), incident.y),
+        cuda_render_math::fma(-projection, detail::mul_rn(T(2), unit_normal.z), incident.z)
     };
+}
+
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline vec3<T>
+reflect_from_outward(vec3<T> outward, vec3<T> unit_normal) noexcept {
+    return cuda_render_math::reflect(-outward, unit_normal);
 }
 
 // -------------------
@@ -255,25 +262,27 @@ reflect(
     
     const T projection = cuda_render_math::dot(incident, unit_normal);
     return {
-        cuda_render_math::fma(-projection, unit_normal.x,
-            cuda_render_math::fma(-projection, unit_normal.x, incident.x)),
-        cuda_render_math::fma(-projection, unit_normal.y,
-            cuda_render_math::fma(-projection, unit_normal.y, incident.y)),
-        cuda_render_math::fma(-projection, unit_normal.z,
-            cuda_render_math::fma(-projection, unit_normal.z, incident.z)),
-        cuda_render_math::fma(-projection, unit_normal.w,
-            cuda_render_math::fma(-projection, unit_normal.w, incident.w))
+        cuda_render_math::fma(-projection, detail::mul_rn(T(2), unit_normal.x), incident.x),
+        cuda_render_math::fma(-projection, detail::mul_rn(T(2), unit_normal.y), incident.y),
+        cuda_render_math::fma(-projection, detail::mul_rn(T(2), unit_normal.z), incident.z),
+        cuda_render_math::fma(-projection, detail::mul_rn(T(2), unit_normal.w), incident.w)
     };
 }
 
 template<real_scalar T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline vec3<T>
-cross_compensated(vec3<T> a, vec3<T> b) noexcept {
+cross(vec3<T> a, vec3<T> b) noexcept {
     return {
         cuda_render_math::difference_of_products(a.y, b.z, a.z, b.y),
         cuda_render_math::difference_of_products(a.z, b.x, a.x, b.z),
         cuda_render_math::difference_of_products(a.x, b.y, a.y, b.x)
     };
+}
+
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline vec4<T>
+reflect_from_outward(vec4<T> outward, vec4<T> unit_normal) noexcept {
+    return cuda_render_math::reflect(-outward, unit_normal);
 }
 
 

@@ -1,3 +1,4 @@
+#include <cuda_render_math/vector_geometry.hpp>
 #include <cuda_render_math/scalar_math.hpp>
 #include <cuda_render_math/vector.hpp>
 

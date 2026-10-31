@@ -74,25 +74,10 @@ acos_clamped(T value) noexcept {
 template<real_scalar T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline T
 difference_of_products(T a, T b, T c, T d) noexcept {
-#if defined(__CUDA_ARCH__)
-    if constexpr (std::same_as<T, float>) {
-        const T rounded_product = ::__fmul_rn(c, d);
-        const T product_error = ::__fmaf_rn(-c, d, rounded_product);
-        const T difference = ::__fmaf_rn(a, b, -rounded_product);
-        return ::__fadd_rn(difference, product_error);
-    } else {
-        const T rounded_product = ::__dmul_rn(c, d);
-        const T product_error = ::__fma_rn(-c, d, rounded_product);
-        const T difference = ::__fma_rn(a, b, -rounded_product);
-        return ::__dadd_rn(difference, product_error);
-    }
-#else
-    const T rounded_product = c * d;
-    const T product_error = std::fma(-c, d, rounded_product);
-    const T difference = std::fma(a, b, -rounded_product);
-    
-    return difference + product_error;
-#endif
+    const T rounded_product = detail::mul_rn(c, d);
+    const T product_error = detail::fma_rn(-c, d, rounded_product);
+    const T difference = detail::fma_rn(a, b, -rounded_product);
+    return detail::add_rn(difference, product_error);
 }
 
 }

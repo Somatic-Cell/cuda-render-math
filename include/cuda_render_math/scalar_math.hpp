@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cuda_render_math/config.hpp>
+#include <cuda_render_math/detail/rounded_arithmetic.hpp>
 #include <cuda_render_math/scalar.hpp>
 
 #include <cassert>
@@ -50,15 +51,7 @@ sqrt(T x) noexcept {
 template<real_scalar T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline T
 fma(T x, T y, T z) noexcept {
-#if defined (__CUDA_ARCH__)
-    if constexpr (std::same_as<T, float>) {
-        return ::__fmaf_rn(x, y, z);
-    } else {
-        return ::__fma_rn(x, y, z);
-    }
-#else
-    return std::fma(x, y, z);
-#endif
+    return detail::fma_rn(x, y, z);
 }
 
 template<real_scalar T>
