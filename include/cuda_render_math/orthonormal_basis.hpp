@@ -99,7 +99,7 @@ make_orthonormal_basis(vec3<T> normal) noexcept {
 
 // orthonormal basis と vec を計算させるための関数
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD inline mat3<T>
+[[nodiscard]] CUDA_RENDER_MATH_HD constexpr mat3<T>
 to_matrix(orthonormal_basis3<T> basis) noexcept {
     return mat3<T>::from_columns(basis.x, basis.y, basis.z);
 }

@@ -9,22 +9,42 @@
 namespace transform_test_support {
 namespace rm = cuda_render_math;
 
-template<typename T>
-constexpr long double tolerance = 512.0L * std::numeric_limits<T>::epsilon();
+template<rm::real_scalar T>
+inline constexpr long double tolerance =
+    512.0L * static_cast<long double>(
+        std::numeric_limits<T>::epsilon());
 
-template<typename T>
+template<rm::real_scalar T>
 bool near(T a, T b, long double tol = tolerance<T>) {
-    const long double aa = static_cast<long double>(a), bb = static_cast<long double>(b);
+    const long double aa = static_cast<long double>(a);
+    const long double bb = static_cast<long double>(b);
+
     return std::isfinite(aa) && std::isfinite(bb) &&
         std::fabs(aa - bb) <= tol * (1.0L + std::fabs(bb));
 }
-template<typename T>
-bool near(rm::vec3<T> a, rm::vec3<T> b, long double tol = tolerance<T>) {
-    return near(a.x,b.x,tol) && near(a.y,b.y,tol) && near(a.z,b.z,tol);
+
+template<rm::real_scalar T>
+bool near(
+    rm::vec3<T> a,
+    rm::vec3<T> b,
+    long double tol = tolerance<T>) {
+
+    return near(a.x, b.x, tol) &&
+           near(a.y, b.y, tol) &&
+           near(a.z, b.z, tol);
 }
-template<typename T>
-bool near(rm::mat3<T> a, rm::mat3<T> b, long double tol = tolerance<T>) {
-    for (int i = 0; i < 9; ++i) if (!near(a.elements[i],b.elements[i],tol)) return false;
+
+template<rm::real_scalar T>
+bool near(
+    rm::mat3<T> a,
+    rm::mat3<T> b,
+    long double tol = tolerance<T>) {
+
+    for (int i = 0; i < 9; ++i) {
+        if (!near(a.elements[i], b.elements[i], tol))
+            return false;
+    }
+
     return true;
 }
 template<typename T>

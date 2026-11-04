@@ -40,7 +40,7 @@ operator*(affine_transform3<T> a, affine_transform3<T> b) noexcept {
 
 template<real_scalar T>
 CUDA_RENDER_MATH_HD inline affine_transform3<T>&
-operator+=(affine_transform3<T>& a, affine_transform3<T>& b) noexcept {
+operator*=(affine_transform3<T>& a, affine_transform3<T> b) noexcept {
     a = a * b;
     return a;
 }
@@ -54,7 +54,7 @@ try_inverse(
 ) noexcept {
     if(!cuda_render_math::is_all_finite(value)) return false;
     affine_transform3<T> candidate;
-    if(cuda_render_math::try_inverse(value.linear, candidate.linear, max_residual)) return false;
+    if(!cuda_render_math::try_inverse(value.linear, candidate.linear, max_residual)) return false;
     candidate.translation = -(candidate.linear * value.translation);
     if(!cuda_render_math::is_all_finite(candidate.translation)) return false;
     output = candidate;

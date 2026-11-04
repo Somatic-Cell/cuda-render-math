@@ -11,10 +11,12 @@ function(cuda_render_math_configure_test target)
     # コンパイルオプション
     if(MSVC)
         target_compile_options(${target} PRIVATE
-            /W4 /utf-8 /permissive- /Zc:__cplusplus /Zc:preprocessor)
+            /W4 /utf-8 /permissive- 
+            /Zc:__cplusplus /Zc:preprocessor
+            /fp:precise)
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         target_compile_options(${target} PRIVATE
-            -Wall -Wextra -Wpedantic -Wconversion)
+            -Wall -Wextra -Wpedantic -Wconversion -fnoe-fast-math -ffp-contract=off)
     endif()
     if(CUDA_RENDER_MATH_WARNINGS_AS_ERRORS)
         if(MSVC)

@@ -131,7 +131,7 @@ try_inverse(
         scaled.row(0), vec3<T>{c00, c01, c02}
     );
 
-    if(det == T(0) || cuda_render_math::isfinite(det)) {
+    if(det == T(0) || !cuda_render_math::isfinite(det)) {
         return false;
     }
 
@@ -166,9 +166,9 @@ try_inverse(
     );
 
     mat3<T> candidate{
-        c00, c01, c02,
-        c10, c11, c12,
-        c20, c21, c22
+        c00, c10, c20,
+        c01, c11, c21,
+        c02, c12, c22
     };
 
     // 行のスケーリングを戻す

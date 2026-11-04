@@ -73,7 +73,8 @@ struct mat3 {
     }
     
     // 指定した行の取得 (vec3 で返す)
-    [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T> row(int r) noexcept {
+    [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T> 
+    row(int r) const noexcept {
         assert(r >= 0 && r < 3);
         return {
             (*this)(r, 0), 
@@ -83,7 +84,8 @@ struct mat3 {
     }
 
     // 指定した列の取得 (vec3 で返す)
-    [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T> column(int c) noexcept {
+    [[nodiscard]] CUDA_RENDER_MATH_HD constexpr vec3<T> 
+    column(int c) const noexcept {
         assert(c >= 0 && c < 3);
         return {
             (*this)(0, c), 
@@ -197,33 +199,38 @@ template<real_scalar T>
 
 // 複合代入演算子
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD constexpr mat3<T>& operator+=(mat3<T> a, mat3<T> b) noexcept {
+CUDA_RENDER_MATH_HD constexpr mat3<T>& 
+operator+=(mat3<T>& a, mat3<T> b) noexcept {
     a = a + b;
     return a;
 }
 
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD constexpr mat3<T>& operator-=(mat3<T> a, mat3<T> b) noexcept {
+CUDA_RENDER_MATH_HD constexpr mat3<T>& 
+operator-=(mat3<T>& a, mat3<T> b) noexcept {
     a = a - b;
     return a;
 }
 
 // スカラ積
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD constexpr mat3<T>& operator*=(mat3<T> a, T scale) noexcept {
+CUDA_RENDER_MATH_HD constexpr mat3<T>& 
+operator*=(mat3<T>& a, T scale) noexcept {
     a = a * scale;
     return a;
 }
 
 // 行列積
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD inline mat3<T>& operator*=(mat3<T> a, mat3<T> b) noexcept {
+CUDA_RENDER_MATH_HD inline mat3<T>& operator*=
+(mat3<T>& a, mat3<T> b) noexcept {
     a = a * b;
     return a;
 }
 
 template<real_scalar T>
-[[nodiscard]] CUDA_RENDER_MATH_HD constexpr mat3<T>& operator/=(mat3<T> a, T scale) noexcept {
+CUDA_RENDER_MATH_HD constexpr mat3<T>& 
+operator/=(mat3<T>& a, T scale) noexcept {
     a = a / scale;
     return a;
 }
