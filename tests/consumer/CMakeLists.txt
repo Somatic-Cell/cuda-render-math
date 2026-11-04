@@ -1,0 +1,22 @@
+cmake_minimum_required(VERSION 3.26)
+project(math_consumer LANGUAGES CXX)
+
+# Fresh, independent project: the library must default to tests/CUDA checks OFF.
+add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../.." library)
+if(TARGET matrix_test OR TARGET cuda_render_math_header_checks OR TARGET cuda_render_math_cuda_check)
+    message(FATAL_ERROR "A consumer must not build the library's tests by default.")
+endif()
+get_target_property(exported_options cuda_render_math INTERFACE_COMPILE_OPTIONS)
+if(exported_options)
+    message(FATAL_ERROR "Test compiler flags leaked into the public target.")
+endif()
+add_executable(math_consumer main.cpp linkage.cpp)
+target_link_libraries(math_consumer PRIVATE cuda_render_math::cuda_render_math)
+# The numerical contract is explicitly selected by this consumer, not inherited.
+if(MSVC)
+    target_compile_options(math_consumer PRIVATE /utf-8 /fp:precise)
+else()
+    target_compile_options(math_consumer PRIVATE -fno-fast-math -ffp-contract=off)
+endif()
+enable_testing()
+add_test(NAME consumer.roundtrip COMMAND math_consumer)

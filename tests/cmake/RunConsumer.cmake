@@ -1,0 +1,22 @@
+function(run_checked)
+    execute_process(COMMAND ${ARGV} RESULT_VARIABLE result)
+    if(NOT result EQUAL 0)
+        message(FATAL_ERROR "Consumer verification failed (${result}): ${ARGV}")
+    endif()
+endfunction()
+
+set(generator_args -G "${GENERATOR}")
+if(GENERATOR_PLATFORM)
+    list(APPEND generator_args -A "${GENERATOR_PLATFORM}")
+endif()
+if(GENERATOR_TOOLSET)
+    list(APPEND generator_args -T "${GENERATOR_TOOLSET}")
+endif()
+if(NOT CONFIG)
+    set(CONFIG Release)
+endif()
+run_checked("${CMAKE_COMMAND}" -S "${SOURCE_DIR}" -B "${BINARY_DIR}"
+    ${generator_args} "-DCMAKE_CXX_COMPILER=${CXX_COMPILER}" "-DCMAKE_BUILD_TYPE=${CONFIG}")
+run_checked("${CMAKE_COMMAND}" --build "${BINARY_DIR}" --config "${CONFIG}" --parallel 2)
+run_checked("${CTEST_COMMAND}" --test-dir "${BINARY_DIR}" -C "${CONFIG}"
+    --output-on-failure --no-tests=error)

@@ -42,6 +42,16 @@ mul_rn(T a, T b) noexcept {
 
 template<real_scalar T>
 [[nodiscard]] CUDA_RENDER_MATH_HD inline T
+div_rn(T a, T b) noexcept {
+#if defined(__CUDA_ARCH__)
+    if constexpr (std::same_as<T, float>) return ::__fdiv_rn(a, b);
+    else return ::__ddiv_rn(a, b);
+#else
+    return a / b;
+#endif
+}
+template<real_scalar T>
+[[nodiscard]] CUDA_RENDER_MATH_HD inline T
 fma_rn(T a, T b, T c) noexcept {
 #if defined(__CUDA_ARCH__)
     if constexpr (std::same_as<T, float>) return ::__fmaf_rn(a, b, c);
