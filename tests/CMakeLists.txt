@@ -16,7 +16,7 @@ function(cuda_render_math_configure_test target)
             /fp:precise)
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         target_compile_options(${target} PRIVATE
-            -Wall -Wextra -Wpedantic -Wconversion -fnoe-fast-math -ffp-contract=off)
+            -Wall -Wextra -Wpedantic -Wconversion -fno-fast-math -ffp-contract=off)
     endif()
     if(CUDA_RENDER_MATH_WARNINGS_AS_ERRORS)
         if(MSVC)
