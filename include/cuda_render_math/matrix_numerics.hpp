@@ -2,6 +2,7 @@
 
 #include <cuda_render_math/matrix.hpp>
 
+#include <concepts>
 #include <cmath>
 #include <limits>
 
